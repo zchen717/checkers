@@ -45,45 +45,77 @@ class Board
     @board[x][y] = value
   end
 
-    def display
-	    print "   "
-	    ('A'..'H').each do |num|
-	      print " #{num}  "
-	    end
-	    puts
-	    @board.each_with_index do |row, index|
-	      print "#{8 - index} "
-	      row.each do |piece|
-	        if piece.nil? 
-	          print "|  |"
-	        else
-	          print "|#{piece.color.to_s[0]}#{piece.class.to_s[0]}|" 
-	        end
-	      end
-	      puts
-	    end
-	    puts
-	    puts
-	    puts
+  def color(color)
+    @board.flatten.compact.select { |piece| piece.color == color }
+  end
+
+  def display
+    print "   "
+    ('A'..'H').each do |num|
+      print " #{num}  "
+    end
+    puts
+    @board.each_with_index do |row, index|
+      print "#{8 - index} "
+      row.each do |piece|
+        if piece.nil? 
+          print "|  |"
+        else
+          print "|#{piece.color.to_s[0]}#{piece.class.to_s[0]}|" 
+        end
+      end
+      puts
+    end
+    puts
+    puts
+    puts
+  end
+
+  def dup_board
+    dupped_board = Board.new(false)
+    (color(:red) + color(:black)).each do |piece|
+      dupped_board[piece.pos] = piece.class.new(piece.pos, dupped_board, piece.color)
+    end
+    dupped_board
   end
 
 end
 
 if __FILE__ == $PROGRAM_NAME
-  b = Board.new(true)
-  b.display
-  p "#{b[[5, 2]].move_diffs}: possible moves for [5, 2]."
-  p b[[5, 2]].perform_slide([4, 3])
-  b.display
-  p "#{b[[2, 3]].move_diffs}: possible moves for [2, 3]."
-  p b[[2, 3]].perform_slide([3, 4])
-  b.display
-  p "#{b[[5, 6]].move_diffs}: possible moves for [5, 6]."
-  p b[[5, 6]].perform_slide([4, 7])
-  b.display
-  p "#{b[[3, 4]].move_diffs}: possible moves for [3, 4]."
-  p b[[3, 4]].perform_jump([5, 2])
-  b.display
-  p b[[5, 4]].perform_jump([3, 6])
-  b.display
+  b = Board.new(false)
+  # b.display
+  # p "#{b[[5, 2]].move_diffs}: possible moves for [5, 2]."
+  # b[[5, 2]].perform_slide([4, 3])
+  # b.display
+  # p "#{b[[2, 3]].move_diffs}: possible moves for [2, 3]."
+  # b[[2, 3]].perform_slide([3, 4])
+  # b.display
+  # p "#{b[[5, 6]].move_diffs}: possible moves for [5, 6]."
+  # b[[5, 6]].perform_slide([4, 7])
+  # b.display
+  # p "#{b[[3, 4]].move_diffs}: possible moves for [3, 4]."
+  # b[[3, 4]].perform_jump([5, 2])
+  # b.display
+  # b[[5, 4]].perform_jump([3, 6])
+  # b.display
+
+
+
+  #king test
+
+  #b[[4, 3]] = Piece.new([4, 3], b, :red)
+  #b[[4, 3]].king = true
+
+  # b[[3, 2]] = Piece.new([3, 2], b, :black)
+  # b[[3, 4]] = Piece.new([3, 4], b, :black)
+  # b[[5, 2]] = Piece.new([5, 2], b, :black)
+  # b[[5, 4]] = Piece.new([5, 4], b, :black)
+
+  # b[[2, 1]] = Piece.new([2, 1], b, :black)
+  # b[[2, 5]] = Piece.new([2, 5], b, :black)
+  # b[[6, 1]] = Piece.new([6, 1], b, :black)
+  # b[[6, 5]] = Piece.new([6, 5], b, :black)
+  # b.display
+  # p b[[4, 3]].move_diffs
+
 end
