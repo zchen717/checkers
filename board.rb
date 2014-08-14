@@ -73,15 +73,17 @@ if __FILE__ == $PROGRAM_NAME
   b = Board.new(true)
   b.display
   p "#{b[[5, 2]].move_diffs}: possible moves for [5, 2]."
-  b[[5, 2]].perform_slide([4, 3])
+  p b[[5, 2]].perform_slide([4, 3])
   b.display
   p "#{b[[2, 3]].move_diffs}: possible moves for [2, 3]."
-  b[[2, 3]].perform_slide([3, 4])
+  p b[[2, 3]].perform_slide([3, 4])
   b.display
   p "#{b[[5, 6]].move_diffs}: possible moves for [5, 6]."
-  b[[5, 6]].perform_slide([4, 7])
+  p b[[5, 6]].perform_slide([4, 7])
   b.display
   p "#{b[[3, 4]].move_diffs}: possible moves for [3, 4]."
-  b[[3, 4]].perform_jump([5, 2])
+  p b[[3, 4]].perform_jump([5, 2])
+  b.display
+  p b[[5, 4]].perform_jump([3, 6])
   b.display
 end

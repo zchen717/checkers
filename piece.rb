@@ -27,22 +27,28 @@ class Piece
 
 	#if there are no pieces at the locations listed by move_diffs then slide current piece to one of the available locations
 	def perform_slide(end_pos)
+		valid_move = move_diffs.include?(end_pos)
+		raise "Improper slide." unless valid_move
 		@board[end_pos] = self
 		@board[@pos] = nil
 		@pos = end_pos
-		# move_diffs.include?(end_pos) # returns false if the requested move isn't legal
+		p move_diffs
+
+		valid_move
 	end
 
 
 	#if there is a piece at one of the two locations then check the location behind it to see if it is jumpable
 	def perform_jump(end_pos)
+		valid_move = move_diffs.include?(end_pos)
+		raise "Improper jump." unless valid_move
+
 		remove_x = (end_pos[0] + @pos[0]) / 2
 		remove_y = (end_pos[1] + @pos[1]) / 2
 
 		@board[end_pos], @board[@pos] = self, nil
 		@board[[remove_x, remove_y]], @pos = nil, end_pos
-
-	  move_diffs.include?(end_pos)
+	  valid_move
 	end
 
 	#returns array containing the two spots in front of piece diagonally unless they 
