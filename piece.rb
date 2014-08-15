@@ -35,9 +35,9 @@ class Piece
 	def perform_slide(end_pos)
 		slideable_moves = move_diffs.select { |move| (move[1] - @pos[1]).abs == 1 }
 		valid_move = slideable_moves.include?(end_pos)
-		p "#{move_diffs} inside of perform_slide"
+		# p "#{move_diffs} inside of perform_slide"
 		unless valid_move
-			p "Not a valid slide." 
+			# p "Not a valid slide." 
 			return false
 		end
 		@board[end_pos] = self
@@ -49,11 +49,11 @@ class Piece
 	end
 
 	def perform_jump(end_pos)
-		p "#{move_diffs} inside of perform_jump"
-		p "end: #{end_pos}"
+		# p "#{move_diffs} inside of perform_jump"
+		# p "end: #{end_pos}"
 		valid_move = move_diffs.include?(end_pos)
 		unless valid_move
-			p "Not a valid jump." 
+			# p "Not a valid jump." 
 			return false
 		end
 
@@ -93,37 +93,38 @@ class Piece
 		valid_moves
 	end
 
-	def perform_moves
-		valid_move_sequence?(move_sequence)
+	def perform_moves(move_sequence)
+		if valid_move_sequence?(move_sequence)
+			@board.perform_moves! # not sure if this is cool
+		else
+			raise InvalidMoveError
+		end
 	end
 
 
 	def perform_moves!(move_sequence)
 		
 		if move_sequence.length == 1
-			p " check slide move"
+			# p " check slide move"
 			slid = perform_slide(move_sequence[0])
 			unless slid
-				p "check jump move"
+				# p "check jump move"
 				jumped = perform_jump(move_sequence[0])
 				raise InvalidMoveError unless jumped
 			end
 			return
 		end
 
-
-		p "Checking long sequence"
+		# p "Checking long sequence"
 		valid = nil
 		move_sequence.each_with_index do |move, index|
-			p "Checking element #{index + 1} in sequence: #{move}." 
+			# p "Checking element #{index + 1} in sequence: #{move}." 
 			valid = perform_jump(move)
-			p "Valid: #{valid}"
+			# p "Valid: #{valid}"
 			@board.display
 			break unless valid
-
-
 		end
-			raise "InvalidMoveError" unless valid
+		raise InvalidMoveError unless valid
 
 	end
 
@@ -132,7 +133,8 @@ class Piece
 	def valid_move_sequence?(move_sequence)
 		dupped_board = @board.dup_board
 
-		@board.display
+		#@board.display
+		dupped_board[@pos].perform_moves!(move_sequence)
 		begin
 			dupped_board[@pos].perform_moves!(move_sequence)
 		rescue ArgumentError => error

@@ -115,21 +115,21 @@ if __FILE__ == $PROGRAM_NAME
 
   #valid_move_sequence test
   #should evaluate to true
-  #p b[[4, 3]].valid_move_sequence?([[2, 5]])
+  #p b[[4, 3]].valid_move_sequence?([[3, 3]])
   #b[[4, 3]].valid_move_sequence?([[2, 5], [4, 7], [6, 5]])
   
 
   #jump check
 
-  p "#{b[[4, 3]].move_diffs}: [4, 3] move_diffs"
-	b[[4, 3]].perform_jump([2, 5])
-	b.display
-	p "#{b[[2, 5]].move_diffs}: [2, 5] move_diffs"
-	b[[2, 5]].perform_jump([4, 7])
-	b.display
-	p "#{b[[4, 7]].move_diffs}: [4, 7] move_diffs"
-	b[[4, 7]].perform_jump([6, 5])
-	b.display
+ #  p "#{b[[4, 3]].move_diffs}: [4, 3] move_diffs"
+	# b[[4, 3]].perform_jump([2, 5])
+	# b.display
+	# p "#{b[[2, 5]].move_diffs}: [2, 5] move_diffs"
+	# b[[2, 5]].perform_jump([4, 7])
+	# b.display
+	# p "#{b[[4, 7]].move_diffs}: [4, 7] move_diffs"
+	# b[[4, 7]].perform_jump([6, 5])
+	# b.display
 
 	#valid moves check
 
