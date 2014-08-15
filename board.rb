@@ -56,12 +56,16 @@ class Board
     end
     puts
     @board.each_with_index do |row, index|
-      print "#{8 - index} "
+      print "#{index} "
       row.each do |piece|
         if piece.nil? 
           print "|  |"
         else
-          print "|#{piece.color.to_s[0]}#{piece.class.to_s[0]}|" 
+        	if !piece.king
+          	print "|#{piece.color.to_s[0]}#{piece.class.to_s[0]}|" 
+          else
+          	print "|#{piece.color.to_s[0]}K|"
+          end
         end
       end
       puts
@@ -78,71 +82,5 @@ class Board
     end
     dupped_board
   end
-
-end
-
-if __FILE__ == $PROGRAM_NAME
-  b = Board.new(false)
-  # b.display
-  # p "#{b[[5, 2]].move_diffs}: possible moves for [5, 2]."
-  # b[[5, 2]].perform_slide([4, 3])
-  # b.display
-  # p "#{b[[2, 3]].move_diffs}: possible moves for [2, 3]."
-  # b[[2, 3]].perform_slide([3, 4])
-  # b.display
-  # p "#{b[[5, 6]].move_diffs}: possible moves for [5, 6]."
-  # b[[5, 6]].perform_slide([4, 7])
-  # b.display
-  # p "#{b[[3, 4]].move_diffs}: possible moves for [3, 4]."
-  # b[[3, 4]].perform_jump([5, 2])
-  # b.display
-  # b[[5, 4]].perform_jump([3, 6])
-  # b.display
-
-
-
-  #king test
-
-  b[[4, 3]] = Piece.new([4, 3], b, :red, true)
-
-
-	b[[3, 4]] = Piece.new([3, 4], b, :black)
-  b[[3, 6]] = Piece.new([3, 6], b, :black)
-  b[[5, 6]] = Piece.new([5, 6], b, :black)
-  b[[1, 4]] = Piece.new([1, 4], b, :black)
-
-  b.display
-
-  #valid_move_sequence test
-  #should evaluate to true
-  #p b[[4, 3]].valid_move_sequence?([[3, 3]])
-  #b[[4, 3]].valid_move_sequence?([[2, 5], [4, 7], [6, 5]])
-  
-
-  #jump check
-
- #  p "#{b[[4, 3]].move_diffs}: [4, 3] move_diffs"
-	# b[[4, 3]].perform_jump([2, 5])
-	# b.display
-	# p "#{b[[2, 5]].move_diffs}: [2, 5] move_diffs"
-	# b[[2, 5]].perform_jump([4, 7])
-	# b.display
-	# p "#{b[[4, 7]].move_diffs}: [4, 7] move_diffs"
-	# b[[4, 7]].perform_jump([6, 5])
-	# b.display
-
-	#valid moves check
-
-  # b[[3, 2]] = Piece.new([3, 2], b, :black)
-  # b[[3, 4]] = Piece.new([3, 4], b, :black)
-  # b[[5, 2]] = Piece.new([5, 2], b, :black)
-  # b[[5, 4]] = Piece.new([5, 4], b, :black)
-
-  # b[[2, 1]] = Piece.new([2, 1], b, :black)
-  # b[[2, 5]] = Piece.new([2, 5], b, :black)
-  # b[[6, 1]] = Piece.new([6, 1], b, :black)
-  # b[[6, 5]] = Piece.new([6, 5], b, :black)
-  # b.display
-  # p b[[4, 3]].move_diffs
 
 end
