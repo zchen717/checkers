@@ -1,37 +1,44 @@
+require_relative 'board'
 class Piece
 
 	attr_accessor :pos, :board, :king
 	attr_reader :color
 
-	def initialize(pos, board, color)
+	def initialize(pos, board, color, king = false)
 		@pos = pos
 		@board = board
 		@color = color
-		@king = false
+		@king = king
 	end
 
-	#returns the direction the piece should be moving depending on the color of the piece.
 	def get_direction
 		(@color == :red) ? -1 : 1
 	end
 
+	def in_bounds?(x, y)
+    (0..7).cover?(x) && (0..7).cover?(y)
+  end
 
-	#y_coord is used to track where the piece you are attempting to jump is located 
-	#relative to the current piece. Returns the location you are attempting to jump to.
 	def jump_pos(x_pos, y_pos)
 		y_direction = (@pos[1] < y_pos) ? 2 : -2
 		x_direction = (@pos[0] < x_pos) ? 2 : -2
 		x, y = @pos
-		[(x + x_direction), (y + y_direction)]
+		new_x = x + x_direction
+		new_y = y + y_direction
+		if in_bounds?(new_y, new_y)
+			return [new_x, new_y] 
+		else
+			return nil
+		end
 	end
 
-
-	#if there are no pieces at the locations listed by move_diffs then slide current piece to one of the available locations
 	def perform_slide(end_pos)
-		valid_move = move_diffs.include?(end_pos)
+		slideable_moves = move_diffs.select { |move| (move[1] - @pos[1]).abs == 1 }
+		valid_move = slideable_moves.include?(end_pos)
+		p "#{move_diffs} inside of perform_slide"
 		unless valid_move
 			p "Not a valid slide." 
-			return 
+			return false
 		end
 		@board[end_pos] = self
 		@board[@pos] = nil
@@ -41,13 +48,13 @@ class Piece
 		valid_move
 	end
 
-
-	#if there is a piece at one of the two locations then check the location behind it to see if it is jumpable
 	def perform_jump(end_pos)
+		p "#{move_diffs} inside of perform_jump"
+		p "end: #{end_pos}"
 		valid_move = move_diffs.include?(end_pos)
 		unless valid_move
 			p "Not a valid jump." 
-			return 
+			return false
 		end
 
 		remove_x = (end_pos[0] + @pos[0]) / 2
@@ -58,9 +65,6 @@ class Piece
 	  valid_move
 	end
 
-	#returns array containing the two spots in front of piece diagonally unless they 
-	#are occupied. If they are occupied then you delete the diagonal move and add the 
-	#jumped to spot if it is empty.
 	def move_diffs
 		moves = []
 		valid_moves = []
@@ -73,14 +77,13 @@ class Piece
 			moves << [king_x, y - 1]
 			moves << [king_x, y + 1]
 		end
+		moves.select! { |move| in_bounds?(move[0], move[1]) }
 		moves.each do |move|
-			#checks to see if there is a piece in the spot.
 			if !@board[move].nil? 
-				#checks to see if that piece is the same color.
-				if @board[move].color != @color && @board[jump_pos(move[0], move[1])].nil?
-					#delete the move from list if the location you jump to is occupied.
-					#or if the piece at the location is the same color.
-					valid_moves << jump_pos(move[0], move[1])
+				jump_check = jump_pos(move[0], move[1])
+				break if jump_check.nil?
+				if @board[move].color != @color && @board[jump_check].nil?
+					valid_moves << jump_check
 				end 
 				puts
 			else
@@ -90,24 +93,60 @@ class Piece
 		valid_moves
 	end
 
+	def perform_moves
+		valid_move_sequence?(move_sequence)
+	end
+
+
 	def perform_moves!(move_sequence)
+		
 		if move_sequence.length == 1
-			moved = perform_slide(move_sequence.first)
-			perform_jump(move_sequence.first) unless moved
+			p " check slide move"
+			slid = perform_slide(move_sequence[0])
+			unless slid
+				p "check jump move"
+				jumped = perform_jump(move_sequence[0])
+				raise InvalidMoveError unless jumped
+			end
+			return
 		end
+
+
+		p "Checking long sequence"
+		valid = nil
+		move_sequence.each_with_index do |move, index|
+			p "Checking element #{index + 1} in sequence: #{move}." 
+			valid = perform_jump(move)
+			p "Valid: #{valid}"
+			@board.display
+			break unless valid
+
+
+		end
+			raise "InvalidMoveError" unless valid
 
 	end
 
-	def valid_move_sequence?
-		dupped_board = dup_board
 
+	#where does move_sequence come from?
+	def valid_move_sequence?(move_sequence)
+		dupped_board = @board.dup_board
+
+		@board.display
+		begin
+			dupped_board[@pos].perform_moves!(move_sequence)
+		rescue ArgumentError => error
+
+			puts "#{error.message}"
+			return false
+		end
+		true
 	end
 
 	def inspect
 		p "Piece"
 	end
 
-	#Returns true if the x position of a piece is at the correct end row.
 	def can_promote?
 		promote_row = (@color == :red) ? 0 : 7
 		@pos[0] == promote_row

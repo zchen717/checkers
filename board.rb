@@ -74,7 +74,7 @@ class Board
   def dup_board
     dupped_board = Board.new(false)
     (color(:red) + color(:black)).each do |piece|
-      dupped_board[piece.pos] = piece.class.new(piece.pos, dupped_board, piece.color)
+      dupped_board[piece.pos] = piece.class.new(piece.pos, dupped_board, piece.color, piece.king)
     end
     dupped_board
   end
@@ -103,8 +103,35 @@ if __FILE__ == $PROGRAM_NAME
 
   #king test
 
-  #b[[4, 3]] = Piece.new([4, 3], b, :red)
-  #b[[4, 3]].king = true
+  b[[4, 3]] = Piece.new([4, 3], b, :red, true)
+
+
+	b[[3, 4]] = Piece.new([3, 4], b, :black)
+  b[[3, 6]] = Piece.new([3, 6], b, :black)
+  b[[5, 6]] = Piece.new([5, 6], b, :black)
+  b[[1, 4]] = Piece.new([1, 4], b, :black)
+
+  b.display
+
+  #valid_move_sequence test
+  #should evaluate to true
+  #p b[[4, 3]].valid_move_sequence?([[2, 5]])
+  #b[[4, 3]].valid_move_sequence?([[2, 5], [4, 7], [6, 5]])
+  
+
+  #jump check
+
+  p "#{b[[4, 3]].move_diffs}: [4, 3] move_diffs"
+	b[[4, 3]].perform_jump([2, 5])
+	b.display
+	p "#{b[[2, 5]].move_diffs}: [2, 5] move_diffs"
+	b[[2, 5]].perform_jump([4, 7])
+	b.display
+	p "#{b[[4, 7]].move_diffs}: [4, 7] move_diffs"
+	b[[4, 7]].perform_jump([6, 5])
+	b.display
+
+	#valid moves check
 
   # b[[3, 2]] = Piece.new([3, 2], b, :black)
   # b[[3, 4]] = Piece.new([3, 4], b, :black)
